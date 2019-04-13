@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+
+
+{% block head %}
+  <script>
+  $( function() {
+    $( "#sortable" ).sortable();
+    $( "#sortable" ).disableSelection();
+  } );
+  </script>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div class="row">
+	{% for course in all_courses %}
+	    <div class="col-md-4">
+			<div class="panel panel-primary">
+		      <div class="panel-heading"><b>{{course.title}}</b></div>
+		      <div class="panel-body">{{course.desc}}<br/>
+					<button type="button" class="btn btn-default">
+				      <span class="glyphicon glyphicon-trash"></span> 
+				    </button>		      
+					<button type="button" class="btn btn-default">
+				      <span class="glyphicon glyphicon-pencil"></span> 
+				    </button>		      
+			    </div>
+		    </div>	    	
+	    </div>
+    {% endfor %}
+  </div>
+  </div>
+</div>
+{% endblock %}
