@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+
+{% block head %}
+ {% load static %}
+  
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	<link rel="stylesheet" type="text/css" href="{% static 'course/css/editcourse.css' %}">
+  <style>
+
+
+  </style>
+
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js">
+
+  </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script type="text/javascript" src="{% static 'course/js/editcourse.js' %}"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+
+    $('button#formsubmit').click(function(){
+
+        // get the value of CSRF token
+        var CSRFtoken = $('input[name=csrfmiddlewaretoken]').val();
+
+        var data = {"jaley":"ajay"};
+
+		function getCookie(name) {
+		    var cookieValue = null;
+		    if (document.cookie && document.cookie !== '') {
+		        var cookies = document.cookie.split(';');
+		        for (var i = 0; i < cookies.length; i++) {
+		            var cookie = jQuery.trim(cookies[i]);
+		            // Does this cookie string begin with the name we want?
+		            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+		                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                break;
+		            }
+		        }
+		    }
+		    return cookieValue;
+		}
+
+
+       	$.post("{% url 'course:edit' 1 %}", { 
+           "course_data" :  JSON.stringify($('.dd').nestable('serialize')),
+           csrfmiddlewaretoken: getCookie('csrftoken')	
+       });
+    });
+});
+
+</script>
+
+{% endblock %}
+
+{% block body %}
+
+
+<div class="container">
+	<div class="jumbotron">
+    <h1>{{course.title}}</h1> 
+  </div>
+
+	<div class="cf nestable-lists">
+	  <div class="dd" id="nestable">
+	    <ol class="dd-list">
+	      {% for topic in course.sorted_topics.all %}
+	      <li class="dd-item" data-id="topic-{{topic.id}}">
+	        <div class="dd-handle">{{topic.title}}</div>
+		       <ol class="dd-list">
+		 	      {% for subtopic in topic.sorted_subtopics.all %}
+		 	      	<li class="dd-item" data-id="subtopic-{{subtopic.id}}" >
+		 	      		<div class="dd-handle">
+		 	      		{{subtopic.title}}
+			 	      	</div>
+		 	      	</li>
+		 	      {% endfor%}
+ 		 	  </ol>
+	      </li>
+	      {% endfor%}
+	    </ol>
+	  </div>
+	</div>
+
+<button type="button" class="btn btn-primary" id="formsubmit">Save</button>
+
+</div>
+
+
+<script type="text/javascript">
+	$('.dd').nestable({ /* config options */ });
+
+
+</script>
+
+{% endblock %}

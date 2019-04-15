@@ -17,14 +17,18 @@
 	{% for course in all_courses %}
 	    <div class="col-md-4">
 			<div class="panel panel-primary">
-		      <div class="panel-heading"><b>{{course.title}}</b></div>
+		      <div class="panel-heading"><b><a href="{% url 'course:detail' course.id %}" style="color: rgb(255,255,255);">{{course.title}}</a></b>
+		      	<span style="float: right">{{course.total_likes}} 
+		      <span class="glyphicon glyphicon-thumbs-up" style="float: right;margin-left : 5px"></span>
+		  		</span>
+		      </div>
 		      <div class="panel-body">{{course.desc}}<br/>
-					<button type="button" class="btn btn-default">
+					<a href={% url 'course:delete' course.id %} class="btn btn-default" role="button">
 				      <span class="glyphicon glyphicon-trash"></span> 
-				    </button>		      
-					<button type="button" class="btn btn-default">
+				    </a>		      
+						<a href={% url 'course:edit' course.id %} class="btn btn-default" role="button">
 				      <span class="glyphicon glyphicon-pencil"></span> 
-				    </button>		      
+				  	</a>
 			    </div>
 		    </div>	    	
 	    </div>
@@ -33,3 +37,5 @@
   </div>
 </div>
 {% endblock %}
+
+

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block head %}
+		{% load static %}
+		<link rel="stylesheet" type="text/css" href="{% static 'userprofile/css/profile.css' %}">
+
+{% endblock %}
+
+
+{% block body %}
+
+<div class="sidebar">
+<a class="active" href="#home"><b>{{profile.full_name }}</b></a>
+  <img src="{{profile.profile_pic.url }} " width="200">
+  <a style="text-align: center;">{{profile.bio}}</a><br/>
+	<div class="text-center">
+	  <a href="{{profile.github_link}}">
+		  	<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" width="35"  >
+	  </a>
+	</div>
+
+</div>
+
+<div class="container" style="margin-left: 300px">
+	<div class="panel-group">
+	    <div class="panel panel-primary">
+	      <div class="panel-heading"><b>Liked Courses</b></div>
+	      	<ul class="list-group">
+	      	  {% for like in profile.likes.all %}
+		      	  <li class="list-group-item">{{like.course.title}} <span style="float:right;">{{like.created}}</span> </li>
+	      	  {% endfor %}
+			</ul>
+	    </div>
+	</div>
+</div>
+
+{% endblock %}

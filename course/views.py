@@ -2,14 +2,15 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render,get_object_or_404,redirect
-from django.views.generic import ListView,ListView,DetailView,View
+from django.views.generic import ListView,ListView,DetailView,View,UpdateView,DeleteView
 from models import Course,Topic, SubTopic
 from django import forms
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import authenticate, login,logout # For user auth
 from django.contrib.auth.mixins import LoginRequiredMixin
 from forms import UserForm
-
+from django.contrib.auth import logout as django_logout
+import json
 
 # Create your views here.
 
@@ -43,7 +44,7 @@ def login_user(request):
 
 
 def logout(request):
-    logout(request)
+    django_logout(request)
     return render(request, 'course/login_form.html')
 
 
@@ -69,7 +70,8 @@ class UserFormView(View):
              password = form.cleaned_data['password']
              user.set_password(password)
              user.save()
-
+             profile = Profile(user=user)
+             profile.save()
              # LOGIN
              user = authenticate(username=username,password=password)
              if user is not None:
@@ -79,3 +81,44 @@ class UserFormView(View):
 
         return render(request, self.template_name, {'form':form})
 
+
+
+class DeleteCourseView(DeleteView):
+    model = Course
+    success_url = reverse_lazy('course:index')
+
+
+
+
+def editCourse(request,pk):
+    if request.method == 'POST':
+        course_data = json.loads(request.POST['course_data'])
+        for topic_oid,topic_data in enumerate(course_data):
+            print (topic_data['id'])
+            tid = int(topic_data['id'].strip().split('-')[-1])
+            topic = Topic.objects.get(pk=tid)
+            topic.order_id=topic_oid
+            for subtopic_oid,subtopic_data in enumerate(topic_data['children']):
+                sid = int(subtopic_data['id'].strip().split('-')[-1])
+                subtopic = SubTopic.objects.get(pk=sid)
+                subtopic.order_id=subtopic_oid
+                subtopic.topic = topic
+                subtopic.save()
+            topic.save()
+
+
+
+    if not request.user.is_authenticated():
+        return render(request, 'blog/login.html')
+    else:
+        template_name = "course/edit.html"
+        context = {
+            "course": Course.objects.get(pk=pk)
+        }
+
+
+
+        return render(request,template_name,context)
+
+
+        
