@@ -46,7 +46,7 @@ $(document).ready(function(){
 		}
 
 
-       	$.post("{% url 'course:edit' 1 %}", { 
+       	$.post("{{course.get_edit_url}}", { 
            "course_data" :  JSON.stringify($('.dd').nestable('serialize')),
            csrfmiddlewaretoken: getCookie('csrftoken')	
        });
@@ -86,10 +86,10 @@ $(document).ready(function(){
 	  </div>
 	</div>
 
-<button type="button" class="btn btn-primary" id="formsubmit">Save</button>
-
 </div>
-
+<dir class="container">
+<button type="button" class="btn btn-primary" id="formsubmit">Save</button>
+</dir>
 
 <script type="text/javascript">
 	$('.dd').nestable({ /* config options */ });

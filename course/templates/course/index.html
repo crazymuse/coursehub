@@ -3,12 +3,7 @@
 
 
 {% block head %}
-  <script>
-  $( function() {
-    $( "#sortable" ).sortable();
-    $( "#sortable" ).disableSelection();
-  } );
-  </script>
+
 {% endblock %}
 
 {% block body %}
@@ -17,18 +12,30 @@
 	{% for course in all_courses %}
 	    <div class="col-md-4">
 			<div class="panel panel-primary">
-		      <div class="panel-heading"><b><a href="{% url 'course:detail' course.id %}" style="color: rgb(255,255,255);">{{course.title}}</a></b>
+		      <div class="panel-heading"><b><a href="{% url 'course:detail' course.id %}" style="color: rgb(255,255,255);font-size: 24px">{{course.title}}</a></b>
 		      	<span style="float: right">{{course.total_likes}} 
 		      <span class="glyphicon glyphicon-thumbs-up" style="float: right;margin-left : 5px"></span>
 		  		</span>
+		  		<br/>
 		      </div>
+		      	<a href="{% url 'course:detail' course.id %}">
+		      	<img src="{{ course.course_pic.url }}" width="100%">
+		      	</a>
+
 		      <div class="panel-body">{{course.desc}}<br/>
+		      	{% if course.publisher.username == request.user.username %}		      
+
 					<a href={% url 'course:delete' course.id %} class="btn btn-default" role="button">
 				      <span class="glyphicon glyphicon-trash"></span> 
-				    </a>		      
-						<a href={% url 'course:edit' course.id %} class="btn btn-default" role="button">
+				    </a>
+				    							<a href={% url 'course:edit' course.id %} class="btn btn-default" role="button">
 				      <span class="glyphicon glyphicon-pencil"></span> 
 				  	</a>
+				  	{% endif %}
+					<a href={% url 'course:detail' course.id %} class="btn btn-default" role="button">
+				      <span class="glyphicon glyphicon-th-list"></span> 
+				    </a>
+
 			    </div>
 		    </div>	    	
 	    </div>

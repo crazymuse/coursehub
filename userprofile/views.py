@@ -13,11 +13,20 @@ from django import forms
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import authenticate, login,logout # For user auth
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
 
-class DetailView(LoginRequiredMixin,DetailView):
-    model = Profile
-    template_name = 'userprofile/detail.html'
+
+@login_required
+def detailView(request,pk):
+	print (type(pk))
+	print (type(request.user.id))
+	profile_list = Profile.objects.filter(profile_user_id=pk)
+	# Do not allow other people to view your profile
+	if (len(profile_list) == 0) or (int(pk) != int(request.user.id)) :
+		return redirect('course:index')
+	else:
+		return render(request,'userprofile/detail.html',context={'profile':profile_list[0]})
+

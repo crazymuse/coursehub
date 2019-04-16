@@ -46,7 +46,7 @@
       <li><a href="{% url 'course:index'%}"><span class="glyphicon glyphicon-th-list "></span> Create Course</a></li>
       <li>
         {% if user.is_active %}
-        <a href="{% url 'userprofile:detail' 1 %}"><span class="glyphicon glyphicon-user"></span>
+        <a href="{% url 'userprofile:detail' user.id %}"><span class="glyphicon glyphicon-user"></span>
         {{ user.get_username }} Profile
         </a>      
         {% endif %}

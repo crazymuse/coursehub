@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Log In{% endblock %}
+{% block login_active %}active{% endblock %}
+
+{% block body %}
+<h2>User Registration</h2>
+
+
+
+
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h3>Register</h3>
+                    {% if error_message %}
+                        <p><strong>{{ error_message }}</strong></p>
+                    {% endif %}
+                        <form class="form-horizontal" role="form" action="{% url 'course:register'%}" method="post" enctype="multipart/form-data">
+                          {% csrf_token %}
+                          {% for field in form %}
+                           <div class="text-danger">
+                               {{field.errors}}
+                          </div>
+                          <label> {{field.label_tag}} </label>
+                          {{field}} <br/>
+                          {% endfor %}
+                        <button type="submit" >Submit</button>
+                    </form>
+                </div>
+                <div class="panel-footer">
+                    Don't have an account? <a href="{% url 'course:login' %}">Click here</a> to login.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

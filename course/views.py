@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render,get_object_or_404,redirect
 from django.views.generic import ListView,ListView,DetailView,View,UpdateView,DeleteView
-from models import Course,Topic, SubTopic
+from models import Course,Topic, SubTopic, Profile,LikeActivity
 from django import forms
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import authenticate, login,logout # For user auth
@@ -11,6 +11,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from forms import UserForm
 from django.contrib.auth import logout as django_logout
 import json
+from django.utils import timezone
+
 
 # Create your views here.
 
@@ -68,10 +70,9 @@ class UserFormView(View):
              # Clean the data 
              username = form.cleaned_data['username']
              password = form.cleaned_data['password']
+             print (username,password)
              user.set_password(password)
              user.save()
-             profile = Profile(user=user)
-             profile.save()
              # LOGIN
              user = authenticate(username=username,password=password)
              if user is not None:
@@ -85,26 +86,31 @@ class UserFormView(View):
 
 class DeleteCourseView(DeleteView):
     model = Course
-    success_url = reverse_lazy('course:index')
+    
 
 
 
 
 def editCourse(request,pk):
     if request.method == 'POST':
+        # Need to add validation Test scenarios. What if the data is not 
+        #proper
         course_data = json.loads(request.POST['course_data'])
         for topic_oid,topic_data in enumerate(course_data):
             print (topic_data['id'])
             tid = int(topic_data['id'].strip().split('-')[-1])
             topic = Topic.objects.get(pk=tid)
             topic.order_id=topic_oid
-            for subtopic_oid,subtopic_data in enumerate(topic_data['children']):
-                sid = int(subtopic_data['id'].strip().split('-')[-1])
-                subtopic = SubTopic.objects.get(pk=sid)
-                subtopic.order_id=subtopic_oid
-                subtopic.topic = topic
-                subtopic.save()
+            if 'children' in  topic_data.keys():
+                for subtopic_oid,subtopic_data in enumerate(topic_data['children']):
+                    sid = int(subtopic_data['id'].strip().split('-')[-1])
+                    subtopic = SubTopic.objects.get(pk=sid)
+                    subtopic.order_id=subtopic_oid
+                    subtopic.topic = topic
+                    subtopic.save()
             topic.save()
+
+    
 
 
 
@@ -118,7 +124,23 @@ def editCourse(request,pk):
 
 
 
+
         return render(request,template_name,context)
 
 
-        
+def addsubtractLikes(request,pk):
+    if request.method == "POST":
+        if 'change' in request.POST:
+            change = int(request.POST['change'])
+            if change == -1:
+                LikeActivity.objects.filter(user_id=request.user.id).filter(course_id=pk).delete()
+            else:
+                print ('CHANGE = ',change)
+                like = LikeActivity()
+                like.user = request.user
+                like.course = Course.objects.get(pk=pk)
+                like.created = timezone.now()
+                like.save()
+
+
+    return render(request,"course/detail.html",{})

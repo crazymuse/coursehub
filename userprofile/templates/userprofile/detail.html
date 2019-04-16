@@ -26,12 +26,46 @@
 	    <div class="panel panel-primary">
 	      <div class="panel-heading"><b>Liked Courses</b></div>
 	      	<ul class="list-group">
-	      	  {% for like in profile.likes.all %}
-		      	  <li class="list-group-item">{{like.course.title}} <span style="float:right;">{{like.created}}</span> </li>
+	      	  {% for like in profile.profile_user.likes.all %}
+		      	  <li class="list-group-item">{{like.course.title}}  </li>
 	      	  {% endfor %}
 			</ul>
 	    </div>
 	</div>
 </div>
+
+<div class="container" style="margin-left: 300px">
+	<div class="panel-group">
+	    <div class="panel panel-primary">
+	      <div class="panel-heading"><b>Created Courses</b></div>
+	      	<ul class="list-group">
+	      	  {% for course in profile.profile_user.published_courses.all %}
+			    <div class="panel panel-default">
+			      <div class="panel-heading" style="font-size: 21px;padding-left: 35px"><b>{{course.title}}</b></div>
+			      	<div class="row">
+			      		<!-- Likes -->
+		      	  		<div class="col-md-3" style="text-align: center;">
+			      	  <li class="list-group-item" style="font-size: 24px">Likes</li> 
+			      	  <li class="list-group-item" style="font-size: 30px">{{course.total_likes}} </li>
+			      	  </div>
+			      		<!-- Topics -->
+		      	  		<div class="col-md-3" style="text-align: center;">
+			      	  <li class="list-group-item" style="font-size: 24px">Topics</li> 
+			      	  <li class="list-group-item" style="font-size: 30px">{{course.topics.count}} </li>
+			      	  </div>
+			      		<!-- Topics -->
+		      	  		<div class="col-md-3" style="text-align: center;">
+			      	  <li class="list-group-item" style="font-size: 24px">Subtopics</li> 
+			      	  <li class="list-group-item" style="font-size: 30px">{{course.get_subtopics_count}} </li>
+			      	  </div>
+
+			        </div>
+			      </div>
+	      	  {% endfor %}
+			</ul>
+	    </div>
+	</div>
+</div>
+
 
 {% endblock %}
