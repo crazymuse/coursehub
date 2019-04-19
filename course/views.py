@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render,get_object_or_404,redirect
 from django.views.generic import ListView,ListView,DetailView,View,UpdateView,DeleteView
-from models import Course,Topic, SubTopic, Profile,LikeActivity
+from models import Course,Topic, SubTopic, Profile
 from django import forms
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import authenticate, login,logout # For user auth
@@ -73,6 +73,9 @@ class UserFormView(View):
              print (username,password)
              user.set_password(password)
              user.save()
+             p = Profile()
+             p.profile_user=user
+             p.save()
              # LOGIN
              user = authenticate(username=username,password=password)
              if user is not None:
@@ -110,7 +113,7 @@ def editCourse(request,pk):
                     subtopic.save()
             topic.save()
 
-    
+
 
 
 
@@ -133,14 +136,13 @@ def addsubtractLikes(request,pk):
         if 'change' in request.POST:
             change = int(request.POST['change'])
             if change == -1:
-                LikeActivity.objects.filter(user_id=request.user.id).filter(course_id=pk).delete()
+                Course.objects.get(pk=pk).likes.remove(request.user)
+
             else:
                 print ('CHANGE = ',change)
-                like = LikeActivity()
-                like.user = request.user
-                like.course = Course.objects.get(pk=pk)
-                like.created = timezone.now()
-                like.save()
+                Course.objects.get(pk=pk).likes.add(request.user)
+
+
 
 
     return render(request,"course/detail.html",{})

@@ -38,6 +38,7 @@ class Course(models.Model):
 	publisher = models.ForeignKey(User,on_delete=models.CASCADE,related_name="published_courses")
 	is_published = models.BooleanField(default=True)
 	course_pic = models.FileField(storage=FileSystemStorage(location=settings.MEDIA_ROOT), upload_to='logos', default='/logos/defaultcourse.jpg')
+	likes = models.ManyToManyField(User,related_name="likes")	
 
 	@property
 	def sorted_topics(self):
@@ -53,7 +54,7 @@ class Course(models.Model):
 
 
 	def liked_by(self,userid):
-		return self.likes.filter(user_id==userid).count()
+		return self.likes.filter(id==userid).count()==1
 
 
 	def get_likes_url(self):
@@ -68,6 +69,12 @@ class Course(models.Model):
  			count+=topic.subtopics.count()
 
  		return count;
+
+
+ 	def get_topics_count(self):
+ 		return self.topics.count()
+
+
 
 
 
@@ -99,22 +106,23 @@ class SubTopic(models.Model):
 		return self.title
 
 
-class LikeActivity(models.Model):
-    user = models.ForeignKey(User,related_name='likes')
-    course = models.ForeignKey(Course,related_name='likes')
-    created = models.DateTimeField(default=timezone.now())
 
-    class Meta:
-        unique_together = ('user', 'course',)
-
-
-    #@staticmethod
-    #def has_liked(userid,courseid):
-    #	return LikeActivity.objects.filter(user_id=userid).filter(course_id=courseid).count()
-
-
-    def __str__(self):
-        return self.user.username + "  likes  '" + self.course.title +"'"
+#class LikeActivity(models.Model):
+#    user = models.ForeignKey(User,related_name='likes')
+#    course = models.ForeignKey(Course,related_name='likes')
+#    created = models.DateTimeField(default=timezone.now())
+#
+#    class Meta:
+#        unique_together = ('user', 'course',)
+#
+#
+#    #@staticmethod
+#    #def has_liked(userid,courseid):
+#    #	return LikeActivity.objects.filter(user_id=userid).filter(course_id=courseid).count()
+#
+#
+#    def __str__(self):
+#        return self.user.username + "  likes  '" + self.course.title +"'"
 
         
 
